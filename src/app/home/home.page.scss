@@ -25,3 +25,29 @@
 #container a {
   text-decoration: none;
 }
+
+.covidForm__form {
+  width: 85%;
+  margin : 3em auto;
+}
+
+// Warning Messages
+.warning__message-temperature.visible,
+.warning__message-saturation.visible{
+  color: red; 
+}
+
+.warning__message-temperature.no-visible,
+.warning__message-saturation.no-visible{
+  display: none;
+}
+
+.comunicare-logo {
+  width: 200px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; 
+  margin: 0 auto;
+}
