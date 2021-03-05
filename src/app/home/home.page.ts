@@ -17,7 +17,6 @@ export class HomePage implements OnInit {
   covidForm: FormGroup;
   dateObject: Date = new Date();
   predictionResult: Array<Object> = [];
-  displaySpinner: boolean = false;
 
   // Risques select values
   risques: Object  = {
