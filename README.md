@@ -2,6 +2,6 @@
 
 Appplication de prédiction du risque d’hospitalisation des patients positifs COVID-19
 
-Ionic/Angualar repo 
+Ionic/Angular repo 
 
 Kouadio Thomas
