@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { DataPatient } from '../dataPatient.interface';
-import { Observable, Subscribable, Subscriber, Subscription, SubscriptionLike } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
 
@@ -73,7 +73,6 @@ export class HomePage implements OnInit {
       });
      }
 
-     
 
 closeMessage(): void {
   this.predictionResult.length = 0;
@@ -90,7 +89,6 @@ toggleSpinner() {
   }, 4000)
   
 }
-
 
 // Get data from API
 sendDatas(): Observable<Object> {
@@ -136,8 +134,6 @@ getPredictionResults(): void  {
   )
 .subscribe()
 }
-
-
 
   ngOnInit() {
     document.querySelector(".container__spinner").classList.add("invisible");
