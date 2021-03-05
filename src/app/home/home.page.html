@@ -8,7 +8,9 @@
 
 <ion-content>
 
-  <form class="covidForm__form" [formGroup]="covidForm" (ngSubmit)="sendDatas()">
+  <h1 class="title-app">Prédiction du risque d’hospitalisation des patients positifs COVID-19</h1>
+
+  <form class="covidForm__form" [formGroup]="covidForm" (ngSubmit)="getPredictionResults()">
 
     <ion-item>
       <ion-label>Nom</ion-label>
@@ -33,31 +35,41 @@
       </ion-select>
     </ion-item>
 
+  <ion-item>
+    <ion-label>Risque(s) (obligatoire)</ion-label>
+    <ion-select multiple formControlName="facteurDeRisque" placeholder="Selectionnez le(s) risque(s)">
+      <ion-select-option *ngFor="let risque of risques | keyvalue" [value]="risque.key">{{risque.value}}</ion-select-option>
+    </ion-select>
+  </ion-item> 
 
   <ion-item>
     <ion-label>Risque(s) (obligatoire)</ion-label>
-    <ion-select formControlName="facteurDeRisque" placeholder="Selectionnez le(s) risque(s)">
-      <ion-select-option value="fr_diabete">Diabete</ion-select-option>
-      <ion-select-option value="fr_maladie_cardiovasculaire">Maladie Cardiovasculaire</ion-select-option>
-      <ion-select-option value="fr_asthme">Asthme</ion-select-option>
-      <ion-select-option value="fr_bpco">BPCO</ion-select-option>
-      <ion-select-option value="fr_obese">Obésité</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <ion-item>
-    <ion-label>Symptôme(s) (obligatoire)</ion-label>
-    <ion-select formControlName="symptomes" placeholder="Selectionnez le(s) symptômes(s)">
-      <ion-select-option value="symp_fievre">Fièvre</ion-select-option>
-      <ion-select-option value="symp_dyspnee">Difficultés respiratoires</ion-select-option>
-      <ion-select-option value="symp_myalgies">Douleurs musculaires</ion-select-option>
-      <ion-select-option value="symp_cephalees">Mal de tête</ion-select-option>
-      <ion-select-option value="symp_toux">Toux</ion-select-option>
-      <ion-select-option value="symp_digestifs">Troubles digestifs</ion-select-option>
+    <ion-select multiple formControlName="symptomes" placeholder="Selectionnez le(s) risque(s)">
+      <ion-select-option *ngFor="let symptome of symptomes | keyvalue" [value]="symptome.key">{{symptome.value}}</ion-select-option>
     </ion-select>
   </ion-item>
 
     <ion-button class="ion-margin-top" expand="full" ion-button type="submit" [disabled]="!covidForm.valid">Soumettre</ion-button>
   </form>
+
+
+  <ion-card padding class="message-result" *ngIf="this.predictionResult.length">  
+
+    <ion-card-content *ngIf="this.predictionResult[0]['etat-prediction'] === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient ne devrait pas être hospitalisé.</b></ion-card-content>
+
+    <ion-card-content *ngIf="this.predictionResult[0]['etat-prediction'] === 'hospitalise' "><b>Nos modèles prédisent à  {{this.predictionResult[0]['pourcentage']}} % que le patient devrait être hospitalisé.</b></ion-card-content>
+
+    <ion-card-content>
+      Pour plus de détails, <a href="https://www.comunicare.be/">cliquez ici</a>
+    </ion-card-content>
+
+    <ion-card-content class="warning__avertissement-message"> 
+      <div>
+        <h3><b>Avertissement</b></h3> 
+      </div>
+      Ceci n'est pas un avis médical. Cet outil expériemental est basé sur l'exploitation de techniques d'intelligence artificielle sur des données réelles mais aucune caution scientifique ne peut être donnée. La prédiction obtenue ne constitue donc pas un avis médical et ne peut remplacer la décision médicale. Vous ne devez pas utiliser ces informations à la place d'une visite, d'un appel, d'une consultation ou des conseils de votre médecin ou d'un autre professionnel de la santé. Vous êtes responsable de tout conseil, traitement, diagnostic ou toute autre information, service ou produit obtenu via ce site.
+   </ion-card-content>
+
+  </ion-card>
 
 </ion-content>

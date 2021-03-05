@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { DataPatient } from '../dataPatient.interface';
+import { Observable, Subscribable, Subscriber, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { PatientService } from '../service/patient.service';
 
 @Component({
   selector: 'app-home',
@@ -9,17 +12,38 @@ import { DataPatient } from '../dataPatient.interface';
   styleUrls: ['home.page.scss'],
 })
 
-
 export class HomePage implements OnInit {
 
   covidForm: FormGroup;
   dateObject: Date = new Date();
   predictionResult: Array<Object> = [];
 
+  // Risques selects
+  risques: Object  = {
+    'fr_diabete' : 'Diabete',
+    'fr_maladie_cardiovasculaire': 'Maladie Cardiovasculaire',
+    'fr_asthme': 'Asthme',
+    'fr_bpco': 'BPCO',
+    'fr_obese': 'Obésité'
+  }
+
+  // Symptomes selects
+  symptomes: Object  = {
+
+    'symp_fievre': 'Fièvre',
+    'symp_dyspnee' : 'Difficultés respiratoires',
+    'symp_myalgies': 'Douleurs musculaires',
+    'symp_cephalees': 'Mal de tête',
+    'symp_toux': 'Toux',
+    'symp_digestifs': 'Troubles digestifs'
+  }
+
+  // Date de la demande
   day: number = this.dateObject.getDay();
   month: number = this.dateObject.getMonth() + 1;
   year: number = this.dateObject.getFullYear();
 
+  // Template d'un patient via l'interface
   dataPatient: DataPatient = {
 
     idPatient: Math.floor(Math.random() * 10000),
@@ -28,46 +52,66 @@ export class HomePage implements OnInit {
     age: 0,
     predictionDate: `${this.day}/${this.month}/${this.year}`,
     sexe: 0,
-    facteurDeRisque: "",
-    symptomes: "",
+    facteurDeRisque: [],
+    symptomes: [],
   };
 
-  constructor( 
+  constructor ( 
     private formBuilder: FormBuilder,
     private api: ApiService,
-     ) {
+
+    // Service pour update et créer le template d'envoi de données du patient
+    private patientService: PatientService
+  ) {
       this.covidForm = this.formBuilder.group({
         nom: ['', Validators.pattern('[a-zA-Z-\' ]*')],
         prenom: ['', Validators.pattern('[a-zA-Z-\' ]*')],
         age: ['', Validators.pattern('[0-9]*')],
         sexe: ['', Validators.required],
-        facteurDeRisque: [''],
-        symptomes: ['']
+        facteurDeRisque: [[''], Validators.required],
+        symptomes: [[''], Validators.required]
       });
      }
 
-  updateDatasPatient(patient: DataPatient, form): DataPatient {
-    patient.nom = form.value.nom;
-    patient.prenom = form.value.prenom;
-    patient.age = form.value.age;
-    patient.sexe = form.value.sexe;
-    patient.facteurDeRisque = form.value.facteurDeRisque;
-    patient.symptomes = form.value.symptomes;
-    return patient;
+     
+sendDatas(): Observable<Object> {
+    this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
+    let dataToSend = this.patientService.createBodyPost(this.dataPatient);
+    return this.api.submitForm(dataToSend);
 }
 
-createPostTemplateData(patient: DataPatient): Array<Object>  {
-  return this.api.createBodyPost(this.dataPatient);
+getPredictionResults()  {
+
+  this.sendDatas().pipe(
+
+    // Map des données renvoyé pour faciliter la récupération des données à l'affichage
+    // Création d'un template comme pour le patient sur this.predictionResult
+    map(
+      values => {
+
+        let userName: string = values['data'][0]['subject']['display'] // optionnel
+        let idPatient: number = values['data'][0]['subject']['reference'] // optionnel
+        let indexSummary: number = values['data'][0]['prediction'].length - 1
+        let summary: Object = values['data'][0]['prediction'][indexSummary]
+        let pourcentage: number = Math.round(summary['probabilityDecimal'] * 100)
+        let etatPrediction: string = summary['outcome']['coding'][0]['code']
+
+        // Le template démarre ici 
+        this.predictionResult.push(
+          {
+            'id-patient': Number(idPatient),
+            'nom-patient': userName,
+            'summary': summary,
+            'etat-prediction': etatPrediction,
+            'pourcentage': pourcentage
+          }
+        )
+      } 
+    )
+  )
+.subscribe()
+
 }
-
-
-  sendDatas(){
-    this.dataPatient = this.updateDatasPatient(this.dataPatient, this.covidForm);
-    const dataToSend = this.createPostTemplateData(this.dataPatient);
-    this.api.submitForm(dataToSend).subscribe(data => this.predictionResult.push(data));
-    console.log(this.predictionResult);
-  }
 
   ngOnInit() {}
-
 }
