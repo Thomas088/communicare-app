@@ -62,3 +62,15 @@
   width: 85%;
   margin : 0 auto;
 }
+
+.container__spinner {
+  text-align: center;
+}
+
+.container__spinner.visible{
+  display: block;
+}
+
+.container__spinner.invisible{
+  display: none;
+}

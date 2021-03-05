@@ -17,6 +17,7 @@ export class HomePage implements OnInit {
   covidForm: FormGroup;
   dateObject: Date = new Date();
   predictionResult: Array<Object> = [];
+  displaySpinner: boolean = false;
 
   // Risques select values
   risques: Object  = {
@@ -74,13 +75,38 @@ export class HomePage implements OnInit {
      }
 
      
+
+closeMessage(): void {
+  this.predictionResult.length = 0;
+}
+
+toggleSpinner() {
+
+  document.querySelector(".container__spinner").classList.remove("invisible");
+  document.querySelector(".container__spinner").classList.add("visible");
+
+  setTimeout(() => {
+    document.querySelector(".container__spinner").classList.remove("visible");
+    document.querySelector(".container__spinner").classList.add("invisible");
+  }, 4000)
+  
+}
+
+
+// Get data from API
 sendDatas(): Observable<Object> {
-    this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
-    let dataToSend: Array<Object> = this.patientService.createBodyPost(this.dataPatient);
-    return this.api.submitForm(dataToSend);
+  this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
+  let dataToSend: Array<Object> = this.patientService.createBodyPost(this.dataPatient);
+  return this.api.submitForm(dataToSend);
 }
 
 getPredictionResults(): void  {
+
+  if(this.predictionResult.length) {
+    this.closeMessage();
+  }
+
+  this.toggleSpinner();
 
   this.sendDatas().pipe(
 
@@ -112,9 +138,9 @@ getPredictionResults(): void  {
 .subscribe()
 }
 
-closeMessage(): void {
-    this.predictionResult.length = 0;
-}
 
-  ngOnInit() {}
+
+  ngOnInit() {
+    document.querySelector(".container__spinner").classList.add("invisible");
+  }
 }
