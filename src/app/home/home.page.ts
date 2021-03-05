@@ -76,7 +76,7 @@ export class HomePage implements OnInit {
      
 sendDatas(): Observable<Object> {
     this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
-    let dataToSend = this.patientService.createBodyPost(this.dataPatient);
+    let dataToSend: Array<Object> = this.patientService.createBodyPost(this.dataPatient);
     return this.api.submitForm(dataToSend);
 }
 
