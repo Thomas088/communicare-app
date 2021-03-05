@@ -112,5 +112,9 @@ getPredictionResults(): void  {
 .subscribe()
 }
 
+closeMessage(): void {
+    this.predictionResult.length = 0;
+}
+
   ngOnInit() {}
 }
