@@ -10,10 +10,9 @@ export class PatientService {
   constructor() { }
 
   // Les méthodes pour update et formater l'envoi en POST
-
   toPost: Array<Object>;
 
-  updateDatasPatient(patient: DataPatient, form): DataPatient {
+updateDatasPatient(patient: DataPatient, form): DataPatient {
     patient.nom = form.value.nom;
     patient.prenom = form.value.prenom;
     patient.age = form.value.age;
@@ -22,7 +21,6 @@ export class PatientService {
     patient.symptomes = form.value.symptomes;
     return patient;
 }
-
 
 mergeRisksAndSymptoms(patient: DataPatient, arrayToMerge: Array<Object>): void {
 

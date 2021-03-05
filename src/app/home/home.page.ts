@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { DataPatient } from '../dataPatient.interface';
-import { Observable, Subscribable, Subscriber, Subscription } from 'rxjs';
+import { Observable, Subscribable, Subscriber, Subscription, SubscriptionLike } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
 
@@ -18,7 +18,7 @@ export class HomePage implements OnInit {
   dateObject: Date = new Date();
   predictionResult: Array<Object> = [];
 
-  // Risques selects
+  // Risques select values
   risques: Object  = {
     'fr_diabete' : 'Diabete',
     'fr_maladie_cardiovasculaire': 'Maladie Cardiovasculaire',
@@ -27,7 +27,7 @@ export class HomePage implements OnInit {
     'fr_obese': 'Obésité'
   }
 
-  // Symptomes selects
+  // Symptomes select values
   symptomes: Object  = {
 
     'symp_fievre': 'Fièvre',
@@ -80,7 +80,7 @@ sendDatas(): Observable<Object> {
     return this.api.submitForm(dataToSend);
 }
 
-getPredictionResults()  {
+getPredictionResults(): void  {
 
   this.sendDatas().pipe(
 
@@ -110,7 +110,6 @@ getPredictionResults()  {
     )
   )
 .subscribe()
-
 }
 
   ngOnInit() {}

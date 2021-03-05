@@ -10,6 +10,7 @@
 
   <h1 class="title-app">Prédiction du risque d’hospitalisation des patients positifs COVID-19</h1>
 
+  <!-- Formulaire -->
   <form class="covidForm__form" [formGroup]="covidForm" (ngSubmit)="getPredictionResults()">
 
     <ion-item>
@@ -52,7 +53,7 @@
     <ion-button class="ion-margin-top" expand="full" ion-button type="submit" [disabled]="!covidForm.valid">Soumettre</ion-button>
   </form>
 
-
+  <!-- Message du resulat -->
   <ion-card padding class="message-result" *ngIf="this.predictionResult.length">  
 
     <ion-card-content *ngIf="this.predictionResult[0]['etat-prediction'] === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient ne devrait pas être hospitalisé.</b></ion-card-content>
