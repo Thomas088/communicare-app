@@ -56,8 +56,10 @@
   </form> 
 
     <div class="container__spinner">
-        <p>Calcul de la prédiction en cours...</p>
-      <ion-spinner *ngIf="!this.predictionResult.length" name="lines"></ion-spinner>
+        <div *ngIf="!this.predictionResult.length">
+          <p> Calcul de prédiction en cours...</p>
+          <ion-spinner name="lines"></ion-spinner>
+        </div>
     </div>
       
   <!-- Message du resulat --> 

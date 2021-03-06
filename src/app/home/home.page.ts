@@ -112,7 +112,7 @@ toggleSpinner(): void {
   setTimeout(() => {
     document.querySelector(".container__spinner").classList.remove("visible");
     document.querySelector(".container__spinner").classList.add("invisible");
-  }, 4000)
+  }, 5000)
   
 }
 
