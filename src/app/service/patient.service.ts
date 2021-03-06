@@ -49,7 +49,7 @@ mergeRisksAndSymptoms(patient: DataPatient, arrayToMerge: Array<Object>): void {
       let templateRisque: Object = {
    
          "valueQuantity":{
-            "value": 1 
+            "value": 1
          },
          "code":{
             "coding":[

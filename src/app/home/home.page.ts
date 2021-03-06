@@ -121,7 +121,8 @@ toggleSpinner(): void {
 sendDatas(): Observable<Object> {
   this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
   let dataToSend: Array<Object> = this.patientService.createBodyPost(this.dataPatient);
-  console.log(dataToSend);
+  // Zone de debug pour les données a envoyer
+  // console.log(dataToSend);
   return this.api.submitForm(dataToSend);
 }
 
