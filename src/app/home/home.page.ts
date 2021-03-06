@@ -97,6 +97,7 @@ chartOptions: ChartOptions = {
 
   chartType: ChartType = 'bar';
   chartLegend = true;
+  chartPlugins = [pluginDataLabels];
   chartsData: ChartDataSets[] = [];
 
 closeMessage(): void {
