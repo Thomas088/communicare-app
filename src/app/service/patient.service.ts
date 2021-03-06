@@ -24,45 +24,46 @@ updateDatasPatient(patient: DataPatient, form): DataPatient {
 
 mergeRisksAndSymptoms(patient: DataPatient, arrayToMerge: Array<Object>): void {
 
-      for(let i: number = 0; i < patient.facteurDeRisque.length; i++) {
+   patient.facteurDeRisque.forEach(facteur => {
 
-         let templateRisque: Object = {
+      let templateRisque: Object = {
    
-            "valueQuantity":{
-               "value": 1 
-            },
-            "code":{
-               "coding":[
-                  {
-                     "code":`${patient.facteurDeRisque[i]}`,
-                     "display":`${patient.facteurDeRisque[i]}`,
-                     "system":"http://comunicare.io"
-                  }
-               ]
-            }
-         };
-         arrayToMerge[0]["component"].push(templateRisque);
-      }
+         "valueQuantity":{
+            "value": 1 
+         },
+         "code":{
+            "coding":[
+               {
+                  "code":`${facteur}`,
+                  "display":`${facteur}`,
+                  "system":"http://comunicare.io"
+               }
+            ]
+         }
+      };
+      arrayToMerge[0]["component"].push(templateRisque);
+   })
+
+   patient.symptomes.forEach(symptome => {
+
+      let templateRisque: Object = {
    
-      for(let i: number  = 0; i < patient.symptomes.length; i++) {
-   
-         let templateSymptome: Object = {
-            "valueQuantity":{
-               "value": 1
-            },
-            "code":{
-               "coding":[
-                  {
-                     "code":`${patient.symptomes[i]}`,
-                     "display":`${patient.symptomes[i]}`,
-                     "system":"http://comunicare.io"
-                  }
-               ]
-            }
-         };
-         arrayToMerge[0]["component"].push(templateSymptome);
-      }
-   }
+         "valueQuantity":{
+            "value": 1 
+         },
+         "code":{
+            "coding":[
+               {
+                  "code":`${symptome}`,
+                  "display":`${symptome}`,
+                  "system":"http://comunicare.io"
+               }
+            ]
+         }
+      };
+      arrayToMerge[0]["component"].push(templateRisque);
+   })
+}
   
   createBodyPost(patient: DataPatient): Array<Object> {
 

@@ -105,7 +105,7 @@ closeMessage(): void {
 }
 
 // Spinner 
-toggleSpinner():void {
+toggleSpinner(): void {
 
   document.querySelector(".container__spinner").classList.remove("invisible");
   document.querySelector(".container__spinner").classList.add("visible");
@@ -121,6 +121,7 @@ toggleSpinner():void {
 sendDatas(): Observable<Object> {
   this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
   let dataToSend: Array<Object> = this.patientService.createBodyPost(this.dataPatient);
+  console.log(dataToSend);
   return this.api.submitForm(dataToSend);
 }
 
