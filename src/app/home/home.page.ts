@@ -89,10 +89,10 @@ chartOptions: ChartOptions = {
     }
   };
   chartColors: Color[] = [
-    {
-      borderColor: '#000000',
-      backgroundColor: '#ff00ff'
-    }
+    // Couleur soins ambulatoire
+    { backgroundColor: '#3DADF2' },
+    // Couleur hospitalisation
+    { backgroundColor: '#020F59' },
   ];
 
   chartType: ChartType = 'bar';
@@ -105,7 +105,7 @@ closeMessage(): void {
 }
 
 // Spinner 
-toggleSpinner() {
+toggleSpinner():void {
 
   document.querySelector(".container__spinner").classList.remove("invisible");
   document.querySelector(".container__spinner").classList.add("visible");
