@@ -176,7 +176,7 @@ getPredictionResults(): void  {
             this.predictionResult[0]['valeursPredictions']['rfAmbulatoire'],
             this.predictionResult[0]['valeursPredictions']['nnAmbulatoire'],
             this.predictionResult[0]['valeursPredictions']['gbtAmbulatoire']
-            ], label: 'Ambulatoire' }, 
+            ], label: 'Soins Ambulatoire' }, 
 
           { data: [
             this.predictionResult[0]['valeursPredictions']['rfHospitalise'],

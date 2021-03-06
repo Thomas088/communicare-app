@@ -57,8 +57,8 @@
       <ion-spinner *ngIf="!this.predictionResult.length" name="lines"></ion-spinner>
     </div>
       
-  <!-- Message du resulat -->
-  <ion-card padding class="message-result" *ngIf="this.predictionResult.length">  
+  <!-- Message du resulat --> 
+  <ion-card  class="message-result ion-padding" *ngIf="this.predictionResult.length">  
 
      <ion-card-content *ngIf="this.predictionResult[0]['etatPrediction'] === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) ne devrait pas être hospitalisé.</b></ion-card-content>
 
