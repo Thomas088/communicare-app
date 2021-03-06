@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { ChartsModule } from 'ng2-charts';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
@@ -17,7 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
     IonicModule.forRoot(), 
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ChartsModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

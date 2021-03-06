@@ -60,9 +60,20 @@
   <!-- Message du resulat -->
   <ion-card padding class="message-result" *ngIf="this.predictionResult.length">  
 
-    <ion-card-content *ngIf="this.predictionResult[0]['etat-prediction'] === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient ne devrait pas être hospitalisé.</b></ion-card-content>
+     <ion-card-content *ngIf="this.predictionResult[0]['etatPrediction'] === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) ne devrait pas être hospitalisé.</b></ion-card-content>
 
-    <ion-card-content *ngIf="this.predictionResult[0]['etat-prediction'] === 'hospitalise' "><b>Nos modèles prédisent à  {{this.predictionResult[0]['pourcentage']}} % que le patient devrait être hospitalisé.</b></ion-card-content>
+    <ion-card-content *ngIf="this.predictionResult[0]['etatPrediction'] === 'hospitalise' "><b>Nos modèles prédisent à  {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) devrait être hospitalisé.</b></ion-card-content>
+
+<!-- Graphiques prédictions -->
+    <canvas 
+        baseChart 
+        [datasets]="chartsData"
+        [labels]="chartLabels"
+        [options]="chartOptions"
+        [plugins]="chartPlugins"
+        [legend]="chartLegend"
+        [chartType]="chartType">
+  ></canvas>
 
     <ion-card-content>
       Pour plus de détails, <a href="https://www.comunicare.be/">cliquez ici</a>
@@ -76,5 +87,4 @@
    </ion-card-content>
 
   </ion-card>
-
 </ion-content>

@@ -5,6 +5,9 @@ import { DataPatient } from '../dataPatient.interface';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import { Color, Label } from 'ng2-charts'; 
 
 @Component({
   selector: 'app-home',
@@ -64,8 +67,8 @@ export class HomePage implements OnInit {
     private patientService: PatientService
   ) {
       this.covidForm = this.formBuilder.group({
-        nom: ['', Validators.pattern('[a-zA-Z-\' ]*')],
-        prenom: ['', Validators.pattern('[a-zA-Z-\' ]*')],
+        nom: ['', Validators.pattern('[a-zA-ZÀ-ÖØ-öø-ÿ-\' ]*')],
+        prenom: ['', Validators.pattern('[a-zA-ZÀ-ÖØ-öø-ÿ-\' ]*')],
         age: ['', Validators.pattern('[0-9]*')],
         sexe: ['', Validators.required],
         facteurDeRisque: [[''], Validators.required],
@@ -73,11 +76,35 @@ export class HomePage implements OnInit {
       });
      }
 
+chartLabels: Label[] = ['Random Forest', 'Neuronal Network','Gradient Boost Tree'];
+
+chartOptions: ChartOptions = {
+    responsive: true,
+    scales: { xAxes: [{}], yAxes: [{}] },
+    plugins: {
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+      }
+    }
+  };
+  chartColors: Color[] = [
+    {
+      borderColor: '#000000',
+      backgroundColor: '#ff00ff'
+    }
+  ];
+
+  chartType: ChartType = 'bar';
+  chartLegend = true;
+  chartPlugins = [pluginDataLabels];
+  chartsData: ChartDataSets[] = [];
 
 closeMessage(): void {
   this.predictionResult.length = 0;
 }
 
+// Spinner 
 toggleSpinner() {
 
   document.querySelector(".container__spinner").classList.remove("invisible");
@@ -86,7 +113,7 @@ toggleSpinner() {
   setTimeout(() => {
     document.querySelector(".container__spinner").classList.remove("visible");
     document.querySelector(".container__spinner").classList.add("invisible");
-  }, 4000)
+  }, 4500)
   
 }
 
@@ -112,8 +139,9 @@ getPredictionResults(): void  {
     map(
       values => {
 
-        let userName: string = values['data'][0]['subject']['display'] // optionnel
-        let idPatient: number = values['data'][0]['subject']['reference'] // optionnel
+        let userName: string = values['data'][0]['subject']['display'] 
+        let idPatient: number = values['data'][0]['subject']['reference'] 
+        let predictions: Object = values['data'][0]['prediction'];
         let indexSummary: number = values['data'][0]['prediction'].length - 1
         let summary: Object = values['data'][0]['prediction'][indexSummary]
         let pourcentage: number = Math.round(summary['probabilityDecimal'] * 100)
@@ -122,20 +150,50 @@ getPredictionResults(): void  {
         // Le template démarre ici 
         this.predictionResult.push(
           {
-            'id-patient': Number(idPatient),
-            'nom-patient': userName,
+            'idPatient': Number(idPatient),
+            'nomPatient': userName,
             'summary': summary,
-            'etat-prediction': etatPrediction,
-            'pourcentage': pourcentage
+            'etatPrediction': etatPrediction,
+            'pourcentage': pourcentage,
+            'tableauPredictionsBrut': predictions,
+            'valeursPredictions': {
+              'rfAmbulatoire': Math.round(predictions[0]['probabilityDecimal'] * 100),
+              'rfHospitalise': Math.round(predictions[1]['probabilityDecimal'] * 100),
+              'nnAmbulatoire': Math.round(predictions[2]['probabilityDecimal'] * 100),
+              'nnHospitalise': Math.round(predictions[3]['probabilityDecimal'] * 100),
+              'gbtAmbulatoire': Math.round(predictions[4]['probabilityDecimal'] * 100),
+              'gbtHospitalise': Math.round(predictions[5]['probabilityDecimal'] * 100),
+            }
           }
         )
+
+         // On configure le dataset pour les charts
+         // Le choix d'une boucle dessus aurait été un peu de trop pour ce que c'est car nous avons que 3 modèles
+         // Aussi prendre en compte qu'il aurait fallu jongler avec les valeurs min / max et aussi prendre en compte que l'index du dernier est le summary (donc pas utile pour le graphe, utile juste pour le calcul final).
+
+          this.chartsData = [
+          { data: [
+            this.predictionResult[0]['valeursPredictions']['rfAmbulatoire'],
+            this.predictionResult[0]['valeursPredictions']['nnAmbulatoire'],
+            this.predictionResult[0]['valeursPredictions']['gbtAmbulatoire']
+            ], label: 'Ambulatoire' }, 
+
+          { data: [
+            this.predictionResult[0]['valeursPredictions']['rfHospitalise'],
+            this.predictionResult[0]['valeursPredictions']['nnHospitalise'],
+            this.predictionResult[0]['valeursPredictions']['gbtHospitalise']
+          ], label: 'Hospitalisation' }
+        ]
       } 
     )
   )
-.subscribe()
+.subscribe(
+  // Zone de debug pour vérifier la nouvelle structure de données
+   () => console.log(this.predictionResult)
+)
 }
 
-  ngOnInit() {
+ngOnInit() {
     document.querySelector(".container__spinner").classList.add("invisible");
   }
 }
