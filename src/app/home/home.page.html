@@ -46,8 +46,8 @@
   </ion-item> 
 
   <ion-item>
-    <ion-label>Risque(s) (obligatoire)</ion-label>
-    <ion-select multiple formControlName="symptomes" placeholder="Selectionnez le(s) risque(s)">
+    <ion-label>Symptome(s) (obligatoire)</ion-label>
+    <ion-select multiple formControlName="symptomes" placeholder="Selectionnez le(s) symptome(s)">
       <ion-select-option *ngFor="let symptome of symptomes | keyvalue" [value]="symptome.key">{{symptome.value}}</ion-select-option>
     </ion-select>
   </ion-item>
