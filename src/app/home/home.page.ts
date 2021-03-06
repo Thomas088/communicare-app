@@ -97,7 +97,6 @@ chartOptions: ChartOptions = {
 
   chartType: ChartType = 'bar';
   chartLegend = true;
-  chartPlugins = [pluginDataLabels];
   chartsData: ChartDataSets[] = [];
 
 closeMessage(): void {
@@ -113,7 +112,7 @@ toggleSpinner(): void {
   setTimeout(() => {
     document.querySelector(".container__spinner").classList.remove("visible");
     document.querySelector(".container__spinner").classList.add("invisible");
-  }, 4500)
+  }, 4000)
   
 }
 

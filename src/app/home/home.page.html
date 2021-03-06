@@ -56,6 +56,7 @@
   </form> 
 
     <div class="container__spinner">
+        <p>Calcul de la prédiction en cours...</p>
       <ion-spinner *ngIf="!this.predictionResult.length" name="lines"></ion-spinner>
     </div>
       
@@ -73,7 +74,6 @@
         [labels]="chartLabels"
         [options]="chartOptions"
         [colors]="chartColors" 
-        [plugins]="chartPlugins"
         [legend]="chartLegend"
         [chartType]="chartType">
   ></canvas>
