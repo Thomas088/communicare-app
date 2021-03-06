@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class ApiService {
 
- private apiUrl: string  = 'https://canalytics.comunicare.io/api/predictionHospitalizationCovidFhir';
+ private apiUrl: string = 'https://canalytics.comunicare.io/api/predictionHospitalizationCovidFhir' ;
 
   constructor(
     private http: HttpClient
@@ -16,3 +18,4 @@ export class ApiService {
   }
 
 }
+ 

@@ -169,7 +169,7 @@ getPredictionResults(): void  {
 
          // On configure le dataset pour les charts
          // Le choix d'une boucle dessus aurait été un peu de trop pour ce que c'est car nous avons que 3 modèles
-         // Aussi prendre en compte qu'il aurait fallu jongler avec les valeurs min / max et aussi prendre en compte que l'index du dernier est le summary (donc pas utile pour le graphe, utile juste pour le calcul final).
+         // Aussi prendre en compte qu'il aurait fallu jongler avec les valeurs Ambulatoire / Hospitalisation et aussi prendre en compte que l'index du dernier est le summary (donc pas utile pour le graphe, utile juste pour le calcul final).
 
           this.chartsData = [
           { data: [
