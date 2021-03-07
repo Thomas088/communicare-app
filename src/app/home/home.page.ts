@@ -21,7 +21,7 @@ export class HomePage implements OnInit {
   dateObject: Date = new Date();
   predictionResult: Array<Object> = [];
 
-  // Risques select values
+  // Risques valeurs (select)
   risques: Object  = {
     'fr_diabete' : 'Diabete',
     'fr_maladie_cardiovasculaire': 'Maladie Cardiovasculaire',
@@ -30,7 +30,7 @@ export class HomePage implements OnInit {
     'fr_obese': 'Obésité'
   }
 
-  // Symptomes select values
+  // Symptomes valeurs (select)
   symptomes: Object  = {
 
     'symp_fievre': 'Fièvre',
@@ -41,7 +41,7 @@ export class HomePage implements OnInit {
     'symp_digestifs': 'Troubles digestifs'
   }
 
-  // Date de la demande
+  // Date de prédiction 
   day: number = this.dateObject.getDay();
   month: number = this.dateObject.getMonth() + 1;
   year: number = this.dateObject.getFullYear();
@@ -97,7 +97,7 @@ chartOptions: ChartOptions = {
 
   chartType: ChartType = 'bar';
   chartLegend = true;
-  chartPlugins = [pluginDataLabels];
+  // chartPlugins = [pluginDataLabels];
   chartsData: ChartDataSets[] = [];
 
 closeMessage(): void {
