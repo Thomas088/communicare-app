@@ -41,7 +41,7 @@
     <ion-select multiple formControlName="facteurDeRisque" placeholder="Selectionnez le(s) risque(s)">
       <ion-select-option *ngFor="let risque of risques | keyvalue" [value]="risque.key">{{risque.value}}</ion-select-option>
     </ion-select>
-  </ion-item> 
+  </ion-item>  
 
   <ion-item>
     <ion-label>Symptome(s) (obligatoire)</ion-label>
