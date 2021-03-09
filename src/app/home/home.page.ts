@@ -127,11 +127,11 @@ sendDatas(): Observable<Object> {
 
 getPredictionResults(): Subscription  {
 
-  if(this.predictionResult.length) {
-    this.closeMessage();
+  if(this.predictionResult.length) { // Si une requete de prédiction a déja été faite
+    this.closeMessage(); // On purge l'ancien résultat
   }
 
-  this.toggleSpinner();
+  this.toggleSpinner(); // On charge le spinner (loader) le temps d'avoir la réponse
 
   return this.sendDatas().pipe(
 
@@ -140,6 +140,8 @@ getPredictionResults(): Subscription  {
     map(
       values => {
 
+        // On récupère toutes les données renvoyées sous format FHIR 
+        // Et prépare les variables pour le template
         let userName: string = values['data'][0]['subject']['display'] 
         let idPatient: number = values['data'][0]['subject']['reference'] 
         let predictions: Object = values['data'][0]['prediction'];

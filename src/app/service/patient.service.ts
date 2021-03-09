@@ -24,6 +24,9 @@ updateDatasPatient(patient: DataPatient, form): DataPatient {
 
 mergeRisksAndSymptoms(patient: DataPatient, arrayToMerge: Array<Object>): void {
 
+   // A partir du tableau des risques et du tableau des symptômes (formulaire),
+   // On construit les templates a envoyer au modèle principal (this.toPost)
+
    patient.facteurDeRisque.forEach(facteur => {
 
       let templateRisque: Object = {
@@ -67,6 +70,7 @@ mergeRisksAndSymptoms(patient: DataPatient, arrayToMerge: Array<Object>): void {
   
   createBodyPost(patient: DataPatient): Array<Object> {
 
+   // template initial avec juste le nom et le sexe
     this.toPost = [
          {
          "subject":{
@@ -107,6 +111,7 @@ mergeRisksAndSymptoms(patient: DataPatient, arrayToMerge: Array<Object>): void {
       }
    ];
 
+   // On push les risques et les symptomes juste après
    this.mergeRisksAndSymptoms(patient, this.toPost);
 
    return this.toPost;
