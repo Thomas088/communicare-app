@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { DataPatient } from '../dataPatient.interface';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { Color, Label } from 'ng2-charts'; 
 
 @Component({
@@ -126,7 +125,7 @@ sendDatas(): Observable<Object> {
   return this.api.submitForm(dataToSend);
 }
 
-getPredictionResults(): void  {
+getPredictionResults(): Subscription  {
 
   if(this.predictionResult.length) {
     this.closeMessage();
@@ -134,7 +133,7 @@ getPredictionResults(): void  {
 
   this.toggleSpinner();
 
-  this.sendDatas().pipe(
+  return this.sendDatas().pipe(
 
     // Map des données renvoyé pour faciliter la récupération des données à l'affichage
     // Création d'un template comme pour le patient sur this.predictionResult
