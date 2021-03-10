@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
-import { DataPatient } from '../dataPatient.interface';
-import { Observable, Subscriber, Subscription } from 'rxjs';
+import { DataPatient } from '../interfaces/dataPatient.interface';
+// import { ValuesReturn, Values, Prediction } from '../interfaces/values.interface';
+import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
-import { Color, Label } from 'ng2-charts'; 
+import { Color, Label } from 'ng2-charts';
+import { Prediction, Values } from '../interfaces/values.interface';
+import { PredictionResult } from '../interfaces/predictionResult.interface';
 
 @Component({
   selector: 'app-home',
@@ -18,29 +21,29 @@ export class HomePage implements OnInit {
 
   covidForm: FormGroup;
   dateObject: Date = new Date();
-  predictionResult: Array<Object> = [];
+  predictionResult: Array<PredictionResult> = [];
 
   // Risques valeurs (select)
-  risques: Object  = {
-    'fr_diabete' : 'Diabete',
-    'fr_maladie_cardiovasculaire': 'Maladie Cardiovasculaire',
-    'fr_asthme': 'Asthme',
-    'fr_bpco': 'BPCO',
-    'fr_obese': 'Obésité'
-  }
+  risques: object  = {
+    fr_diabete : 'Diabete',
+    fr_maladie_cardiovasculaire: 'Maladie Cardiovasculaire',
+    fr_asthme: 'Asthme',
+    fr_bpco: 'BPCO',
+    fr_obese: 'Obésité'
+  };
 
   // Symptomes valeurs (select)
-  symptomes: Object  = {
+  symptomes: object  = {
 
-    'symp_fievre': 'Fièvre',
-    'symp_dyspnee' : 'Difficultés respiratoires',
-    'symp_myalgies': 'Douleurs musculaires',
-    'symp_cephalees': 'Mal de tête',
-    'symp_toux': 'Toux',
-    'symp_digestifs': 'Troubles digestifs'
-  }
+    symp_fievre: 'Fièvre',
+    symp_dyspnee : 'Difficultés respiratoires',
+    symp_myalgies: 'Douleurs musculaires',
+    symp_cephalees: 'Mal de tête',
+    symp_toux: 'Toux',
+    symp_digestifs: 'Troubles digestifs'
+  };
 
-  // Date de prédiction 
+  // Date de prédiction
   day: number = this.dateObject.getDay();
   month: number = this.dateObject.getMonth() + 1;
   year: number = this.dateObject.getFullYear();
@@ -49,8 +52,8 @@ export class HomePage implements OnInit {
   dataPatient: DataPatient = {
 
     idPatient: Math.floor(Math.random() * 10000),
-    prenom: "",
-    nom: "",
+    prenom: '',
+    nom: '',
     age: 0,
     predictionDate: `${this.day}/${this.month}/${this.year}`,
     sexe: 0,
@@ -58,7 +61,7 @@ export class HomePage implements OnInit {
     symptomes: [],
   };
 
-  constructor ( 
+  constructor(
     private formBuilder: FormBuilder,
     private api: ApiService,
 
@@ -75,7 +78,7 @@ export class HomePage implements OnInit {
       });
      }
 
-chartLabels: Label[] = ['Random Forest', 'Neuronal Network','Gradient Boost Tree'];
+chartLabels: Label[] = ['Random Forest', 'Neuronal Network', 'Gradient Boost Tree'];
 
 chartOptions: ChartOptions = {
     responsive: true,
@@ -103,23 +106,16 @@ closeMessage(): void {
   this.predictionResult.length = 0;
 }
 
-// Spinner 
+// Spinner
 toggleSpinner(): void {
-
-  document.querySelector(".container__spinner").classList.remove("invisible");
-  document.querySelector(".container__spinner").classList.add("visible");
-
-  setTimeout(() => {
-    document.querySelector(".container__spinner").classList.remove("visible");
-    document.querySelector(".container__spinner").classList.add("invisible");
-  }, 5000)
-  
+  document.querySelector('.container__spinner').classList.remove('invisible');
+  document.querySelector('.container__spinner').classList.add('visible');
 }
 
 // Get data from API
-sendDatas(): Observable<Object> {
+sendDatas(): Observable<Values> {
   this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
-  let dataToSend: Array<Object> = this.patientService.createBodyPost(this.dataPatient);
+  const dataToSend: Array<object> = this.patientService.createBodyPost(this.dataPatient);
   // Zone de debug pour les données a envoyer
   console.log(dataToSend);
   return this.api.submitForm(dataToSend);
@@ -127,7 +123,7 @@ sendDatas(): Observable<Object> {
 
 getPredictionResults(): Subscription  {
 
-  if(this.predictionResult.length) { // Si une requete de prédiction a déja été faite
+  if (this.predictionResult.length) { // Si une requete de prédiction a déja été faite
     this.closeMessage(); // On purge l'ancien résultat
   }
 
@@ -137,66 +133,70 @@ getPredictionResults(): Subscription  {
 
     // Map des données renvoyé pour faciliter la récupération des données à l'affichage
     // Création d'un template comme pour le patient sur this.predictionResult
+
     map(
       values => {
 
-        // On récupère toutes les données renvoyées sous format FHIR 
+        // On récupère toutes les données renvoyées sous format FHIR
         // Et prépare les variables pour le template
-        let userName: string = values['data'][0]['subject']['display'] 
-        let idPatient: number = values['data'][0]['subject']['reference'] 
-        let predictions: Object = values['data'][0]['prediction'];
-        let indexSummary: number = values['data'][0]['prediction'].length - 1
-        let summary: Object = values['data'][0]['prediction'][indexSummary]
-        let pourcentage: number = Math.round(summary['probabilityDecimal'] * 100)
-        let etatPrediction: string = summary['outcome']['coding'][0]['code']
+        const data = values.data[0];
+        const userName: string = data.subject.display;
+        const idPatient: string = data.subject.reference;
+        const predictions: Prediction[] = data.prediction;
+        const indexSummary: number = data.prediction.length - 1;
+        const summary: Prediction = data.prediction[indexSummary];
+        const pourcentage: number = Math.round(summary.probabilityDecimal * 100);
+        const etatPrediction: string = summary.outcome.coding[0].code;
 
-        // Le template démarre ici 
+        // Le template démarre ici
         this.predictionResult.push(
           {
-            'idPatient': Number(idPatient),
-            'nomPatient': userName,
-            'summary': summary,
-            'etatPrediction': etatPrediction,
-            'pourcentage': pourcentage,
-            'tableauPredictionsBrut': predictions,
-            'valeursPredictions': {
-              'rfAmbulatoire': Math.round(predictions[0]['probabilityDecimal'] * 100),
-              'rfHospitalise': Math.round(predictions[1]['probabilityDecimal'] * 100),
-              'nnAmbulatoire': Math.round(predictions[2]['probabilityDecimal'] * 100),
-              'nnHospitalise': Math.round(predictions[3]['probabilityDecimal'] * 100),
-              'gbtAmbulatoire': Math.round(predictions[4]['probabilityDecimal'] * 100),
-              'gbtHospitalise': Math.round(predictions[5]['probabilityDecimal'] * 100),
+            idPatient: Number(idPatient),
+            nomPatient: userName,
+            summary,
+            etatPrediction,
+            pourcentage,
+            tableauPredictionsBrut: predictions,
+            valeursPredictions: {
+              rfAmbulatoire: Math.round(predictions[0].probabilityDecimal * 100),
+              rfHospitalise: Math.round(predictions[1].probabilityDecimal * 100),
+              nnAmbulatoire: Math.round(predictions[2].probabilityDecimal * 100),
+              nnHospitalise: Math.round(predictions[3].probabilityDecimal * 100),
+              gbtAmbulatoire: Math.round(predictions[4].probabilityDecimal * 100),
+              gbtHospitalise: Math.round(predictions[5].probabilityDecimal * 100),
             }
           }
-        )
+        );
 
          // On configure le dataset pour les charts
          // Le choix d'une boucle dessus aurait été un peu de trop pour ce que c'est car nous avons que 3 modèles
+         // tslint:disable-next-line: max-line-length
          // Aussi prendre en compte qu'il aurait fallu jongler avec les valeurs Ambulatoire / Hospitalisation et aussi prendre en compte que l'index du dernier est le summary (donc pas utile pour le graphe, utile juste pour le calcul final).
 
-          this.chartsData = [
+        this.chartsData = [
           { data: [
-            this.predictionResult[0]['valeursPredictions']['rfAmbulatoire'],
-            this.predictionResult[0]['valeursPredictions']['nnAmbulatoire'],
-            this.predictionResult[0]['valeursPredictions']['gbtAmbulatoire']
-            ], label: 'Soins Ambulatoire' }, 
+            this.predictionResult[0].valeursPredictions.rfAmbulatoire,
+            this.predictionResult[0].valeursPredictions.nnAmbulatoire,
+            this.predictionResult[0].valeursPredictions.gbtAmbulatoire
+            ], label: 'Soins Ambulatoire' },
 
           { data: [
-            this.predictionResult[0]['valeursPredictions']['rfHospitalise'],
-            this.predictionResult[0]['valeursPredictions']['nnHospitalise'],
-            this.predictionResult[0]['valeursPredictions']['gbtHospitalise']
+            this.predictionResult[0].valeursPredictions.rfHospitalise,
+            this.predictionResult[0].valeursPredictions.nnHospitalise,
+            this.predictionResult[0].valeursPredictions.gbtHospitalise
           ], label: 'Hospitalisation' }
-        ]
-      } 
+        ];
+      }
     )
   )
+// tslint:disable-next-line: deprecation
 .subscribe(
   // Zone de debug pour vérifier la nouvelle structure de données
    () => console.log(this.predictionResult)
-)
+);
 }
 
 ngOnInit() {
-    document.querySelector(".container__spinner").classList.add("invisible");
+    document.querySelector('.container__spinner').classList.add('invisible');
   }
 }
