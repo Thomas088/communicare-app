@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { DataPatient } from '../interfaces/dataPatient.interface';
-// import { ValuesReturn, Values, Prediction } from '../interfaces/values.interface';
+// import { ValuesReturn, Values, Prediction, Datum, FHIRData } from '../interfaces/values.interface';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { Prediction, Values } from '../interfaces/values.interface';
+import { Prediction, FHIRData, Datum } from '../interfaces/values.interface';
 import { PredictionResult } from '../interfaces/predictionResult.interface';
 
 @Component({
@@ -23,7 +23,6 @@ export class HomePage implements OnInit {
   dateObject: Date = new Date();
   predictionResult: Array<PredictionResult> = [];
 
-  // Risques valeurs (select)
   risques: object  = {
     fr_diabete : 'Diabete',
     fr_maladie_cardiovasculaire: 'Maladie Cardiovasculaire',
@@ -32,7 +31,6 @@ export class HomePage implements OnInit {
     fr_obese: 'Obésité'
   };
 
-  // Symptomes valeurs (select)
   symptomes: object  = {
 
     symp_fievre: 'Fièvre',
@@ -43,12 +41,11 @@ export class HomePage implements OnInit {
     symp_digestifs: 'Troubles digestifs'
   };
 
-  // Date de prédiction
+
   day: number = this.dateObject.getDay();
   month: number = this.dateObject.getMonth() + 1;
   year: number = this.dateObject.getFullYear();
 
-  // Template d'un patient via l'interface
   dataPatient: DataPatient = {
 
     idPatient: Math.floor(Math.random() * 10000),
@@ -64,8 +61,6 @@ export class HomePage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private api: ApiService,
-
-    // Service pour update et créer le template d'envoi de données du patient
     private patientService: PatientService
   ) {
       this.covidForm = this.formBuilder.group({
@@ -113,7 +108,7 @@ toggleSpinner(): void {
 }
 
 // Get data from API
-sendDatas(): Observable<Values> {
+sendDatas(): Observable<FHIRData> {
   this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
   const dataToSend: Array<object> = this.patientService.createBodyPost(this.dataPatient);
   // Zone de debug pour les données a envoyer
@@ -143,10 +138,9 @@ getPredictionResults(): Subscription  {
         const userName: string = data.subject.display;
         const idPatient: string = data.subject.reference;
         const predictions: Prediction[] = data.prediction;
-        const indexSummary: number = data.prediction.length - 1;
-        const summary: Prediction = data.prediction[indexSummary];
-        const pourcentage: number = Math.round(summary.probabilityDecimal * 100);
-        const etatPrediction: string = summary.outcome.coding[0].code;
+        const summary: Partial<Prediction[]> = predictions.filter(prediction => prediction.rationale === 'summary');
+        const pourcentage: number = Math.round(summary[0].probabilityDecimal * 100);
+        const etatPrediction: string = summary[0].outcome.coding[0].code;
 
         // Le template démarre ici
         this.predictionResult.push(
@@ -169,10 +163,6 @@ getPredictionResults(): Subscription  {
         );
 
          // On configure le dataset pour les charts
-         // Le choix d'une boucle dessus aurait été un peu de trop pour ce que c'est car nous avons que 3 modèles
-         // tslint:disable-next-line: max-line-length
-         // Aussi prendre en compte qu'il aurait fallu jongler avec les valeurs Ambulatoire / Hospitalisation et aussi prendre en compte que l'index du dernier est le summary (donc pas utile pour le graphe, utile juste pour le calcul final).
-
         this.chartsData = [
           { data: [
             this.predictionResult[0].valeursPredictions.rfAmbulatoire,
@@ -189,7 +179,6 @@ getPredictionResults(): Subscription  {
       }
     )
   )
-// tslint:disable-next-line: deprecation
 .subscribe(
   // Zone de debug pour vérifier la nouvelle structure de données
    () => console.log(this.predictionResult)

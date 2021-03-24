@@ -1,5 +1,5 @@
 // Interface générée avec "Json To Code" VS Code Extension
-export interface Values {
+export interface FHIRData {
   success: boolean;
   message: null;
   data: Datum[];

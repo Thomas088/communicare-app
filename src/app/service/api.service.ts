@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Values } from '../interfaces/values.interface';
+import { FHIRData } from '../interfaces/values.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  submitForm(data): Observable<Values> {
-    return this.http.post<Values>(this.apiUrl, data);
+  submitForm(data): Observable<FHIRData> {
+    return this.http.post<FHIRData>(this.apiUrl, data);
   }
 
 }
