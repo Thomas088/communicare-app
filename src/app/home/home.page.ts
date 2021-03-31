@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { DataPatient } from '../interfaces/dataPatient.interface';
-// import { ValuesReturn, Values, Prediction, Datum, FHIRData } from '../interfaces/values.interface';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PatientService } from '../service/patient.service';
