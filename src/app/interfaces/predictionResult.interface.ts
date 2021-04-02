@@ -8,12 +8,5 @@ export interface PredictionResult {
   etatPrediction: string;
   pourcentage;
   tableauPredictionsBrut: Prediction[];
-  valeursPredictions: {
-    rfAmbulatoire: number,
-    rfHospitalise: number,
-    nnAmbulatoire: number,
-    nnHospitalise: number,
-    gbtAmbulatoire: number,
-    gbtHospitalise: number,
-  };
+  valeursPredictions;
 }

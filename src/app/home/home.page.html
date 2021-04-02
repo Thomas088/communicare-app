@@ -39,7 +39,7 @@
   <ion-item>
     <ion-label>Risque(s) (obligatoire)</ion-label>
     <ion-select multiple formControlName="facteurDeRisque" placeholder="Selectionnez le(s) risque(s)">
-      <ion-select-option *ngFor="let risque of risques | keyvalue" [value]="risque.key">{{risque.value}}</ion-select-option>
+      <ion-select-option *ngFor="let risque of risques | keyvalue " [value]="risque.key">{{risque.value}}</ion-select-option>
     </ion-select>
   </ion-item>  
 
@@ -50,8 +50,15 @@
     </ion-select>
   </ion-item>
 
-    <ion-button class="ion-margin-top" expand="full" ion-button type="submit" [disabled]="!covidForm.valid">Soumettre</ion-button>
+    <ion-button class="ion-margin-top" expand="full" ion-button type="submit" [disabled]="!covidForm.valid">Soumettre</ion-button> 
   </form> 
+
+  <ion-card *ngIf="" class="container__error-message">
+    <ion-card-content>
+
+    </ion-card-content>
+  </ion-card>
+
 
     <div class="container__spinner">
         <div *ngIf="!this.predictionResult.length">
@@ -60,12 +67,12 @@
         </div>
     </div>
       
-  <!-- Message du resulat --> 
+
   <ion-card  class="message-result ion-padding" *ngIf="this.predictionResult.length">  
 
-     <ion-card-content *ngIf="this.predictionResult[0]['etatPrediction'] === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) ne devrait pas être hospitalisé.</b></ion-card-content>
+     <ion-card-content *ngIf="this.predictionResult[0].etatPrediction === 'ambulatoire' " ><b>Nos modèles prédisent à {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) ne devrait pas être hospitalisé.</b></ion-card-content>
 
-    <ion-card-content *ngIf="this.predictionResult[0]['etatPrediction'] === 'hospitalise' "><b>Nos modèles prédisent à  {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) devrait être hospitalisé.</b></ion-card-content>
+    <ion-card-content *ngIf="this.predictionResult[0].etatPrediction === 'hospitalise' "><b>Nos modèles prédisent à  {{this.predictionResult[0]['pourcentage']}} % que le patient {{this.predictionResult[0]['nomPatient']}} (id : {{this.predictionResult[0]['idPatient']}}) devrait être hospitalisé.</b></ion-card-content>
 
 <!-- Graphiques prédictions -->
     <canvas 
