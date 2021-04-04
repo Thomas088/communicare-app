@@ -9,11 +9,13 @@ import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import { Prediction, FHIRData } from '../interfaces/values.interface';
 import { PredictionResult } from '../interfaces/predictionResult.interface';
-import { resultClassifier } from '../enums/resultClassifier.enum';
-import { ClassifierAmbulatoire } from '../enums/classifierAmbulatoire.enum';
-import { ClassifierHospitalise } from '../enums/classifierHospitalise.enum';
+import { resultClassifierEnum } from '../enums/resultClassifier.enum';
+import { ClassifierAmbulatoireEnum } from '../enums/classifierAmbulatoire.enum';
+import { ClassifierHospitaliseEnum } from '../enums/classifierHospitalise.enum';
 import { DatasetHospitalisation } from '../interfaces/datasetHospitalisation.interface';
 import { DatasetAmbulatoire } from '../interfaces/datasetAmbulatoire.interface';
+import { RisquesEnum } from '../enums/risques.enum';
+import { SymptomesEnum } from '../enums/symptomes.enum';
 
 @Component({
   selector: 'app-home',
@@ -28,32 +30,17 @@ export class HomePage implements OnInit {
   predictionResult: Array<PredictionResult> = [];
   errorMessage = '';
 
-  risques: object  = {
-    fr_diabete : 'Diabete',
-    fr_maladie_cardiovasculaire: 'Maladie Cardiovasculaire',
-    fr_asthme: 'Asthme',
-    fr_bpco: 'BPCO',
-    fr_obese: 'Obésité'
-  };
+  risques = RisquesEnum;
+  symptomes = SymptomesEnum;
 
-  symptomes: object  = {
+  resultClassifier: string[] = Object.keys(resultClassifierEnum)
+                                    .filter(key => !isNaN(resultClassifierEnum[key]));
 
-    symp_fievre: 'Fièvre',
-    symp_dyspnee : 'Difficultés respiratoires',
-    symp_myalgies: 'Douleurs musculaires',
-    symp_cephalees: 'Mal de tête',
-    symp_toux: 'Toux',
-    symp_digestifs: 'Troubles digestifs'
-  };
+  classifierAmbulatoire: string[] = Object.keys(ClassifierAmbulatoireEnum)
+                                          .filter(key => !isNaN(ClassifierAmbulatoireEnum[key]));
 
-resultClassifier: string[] = Object.keys(resultClassifier)
-                                   .filter(key => !isNaN(resultClassifier[key]));
-
-classifierAmbulatoire: string[] = Object.keys(ClassifierAmbulatoire)
-                                        .filter(key => !isNaN(ClassifierAmbulatoire[key]));
-
-classifierHospitalise: string[] = Object.keys(ClassifierHospitalise)
-                                        .filter(key => !isNaN(ClassifierHospitalise[key]));
+  classifierHospitalise: string[] = Object.keys(ClassifierHospitaliseEnum)
+                                          .filter(key => !isNaN(ClassifierHospitaliseEnum[key]));
 
   day: number = this.dateObject.getDay();
   month: number = this.dateObject.getMonth() + 1;
@@ -86,18 +73,18 @@ classifierHospitalise: string[] = Object.keys(ClassifierHospitalise)
       });
      }
 
-chartLabels: Label[] = ['Random Forest', 'Neuronal Network', 'Gradient Boost Tree'];
+  chartLabels: Label[] = ['Random Forest', 'Neuronal Network', 'Gradient Boost Tree'];
 
-chartOptions: ChartOptions = {
-    responsive: true,
-    scales: { xAxes: [{}], yAxes: [{}] },
-    plugins: {
-      datalabels: {
-        anchor: 'end',
-        align: 'end',
+  chartOptions: ChartOptions = {
+      responsive: true,
+      scales: { xAxes: [{}], yAxes: [{}] },
+      plugins: {
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+        }
       }
-    }
-  };
+    };
   chartColors: Color[] = [
     // Ambulatoire
     { backgroundColor: '#3DADF2' },
@@ -120,92 +107,93 @@ chartOptions: ChartOptions = {
     label: 'Hospitalisation'
   };
 
-closeResultMessage(): void {
-  this.predictionResult.length = 0;
-}
+  closeResultMessage(): void {
+    this.predictionResult.length = 0;
+  }
 
-closeErrorMesssage(): void {
-  this.errorMessage = '';
-}
+  closeErrorMesssage(): void {
+    this.errorMessage = '';
+  }
+
  closeSpinner(): void  {
   document.querySelector('.container__spinner').classList.remove('visible');
   document.querySelector('.container__spinner').classList.add('invisible');
  }
 
-displaySpinner(): void {
-  document.querySelector('.container__spinner').classList.remove('invisible');
-  document.querySelector('.container__spinner').classList.add('visible');
-}
-
-sendDatas(): Observable<FHIRData> {
-  this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
-  const dataToSend: Array<object> = this.patientService.createBodyPost(this.dataPatient);
-  return this.api.submitForm(dataToSend);
-}
-
-getPredictionResults(): Subscription  {
-
-  if (this.predictionResult.length) {
-    this.closeResultMessage();
+  displaySpinner(): void {
+    document.querySelector('.container__spinner').classList.remove('invisible');
+    document.querySelector('.container__spinner').classList.add('visible');
   }
 
-  return this.sendDatas().pipe(
+  sendDatas(): Observable<FHIRData> {
+    this.dataPatient = this.patientService.updateDatasPatient(this.dataPatient, this.covidForm);
+    const dataToSend: Array<object> = this.patientService.createBodyPost(this.dataPatient);
+    return this.api.submitForm(dataToSend);
+  }
 
-    map(
-      fhirResults => {
+  getPredictionResults(): Subscription  {
 
-        const data = fhirResults.data[0];
-        const userName: string = data.subject.display;
-        const idPatient: string = data.subject.reference;
-        const predictions: Prediction[] = data.prediction;
-        const summary: Partial<Prediction[]> = predictions.filter(prediction => prediction.rationale === 'summary');
-        const pourcentage: number = Math.round(summary[0].probabilityDecimal * 100);
-        const etatPrediction: string = summary[0].outcome.coding[0].code;
-        const templateResult: object = {};
+    if (this.predictionResult.length) {
+      this.closeResultMessage();
+    }
 
-        this.resultClassifier.forEach((value, i) => templateResult[value] = Math.round(predictions[i].probabilityDecimal * 100));
+    return this.sendDatas().pipe(
 
-        this.predictionResult.push(
-          {
-            idPatient: Number(idPatient),
-            nomPatient: userName,
-            summary,
-            etatPrediction,
-            pourcentage,
-            tableauPredictionsBrut: predictions,
-            valeursPredictions: templateResult
-          }
-        );
+      map(
+        fhirResults => {
 
-        this.classifierAmbulatoire.forEach((classifier) =>  {
+          const data = fhirResults.data[0];
+          const userName: string = data.subject.display;
+          const idPatient: string = data.subject.reference;
+          const predictions: Prediction[] = data.prediction;
+          const summary: Partial<Prediction[]> = predictions.filter(prediction => prediction.rationale === 'summary');
+          const pourcentage: number = Math.round(summary[0].probabilityDecimal * 100);
+          const etatPrediction: string = summary[0].outcome.coding[0].code;
+          const templateResult: object = {};
+
+          this.resultClassifier.forEach((value, i) => templateResult[value] = Math.round(predictions[i].probabilityDecimal * 100));
+
+          this.predictionResult.push(
+            {
+              idPatient: Number(idPatient),
+              nomPatient: userName,
+              summary,
+              etatPrediction,
+              pourcentage,
+              tableauPredictionsBrut: predictions,
+              valeursPredictions: templateResult
+            }
+          );
+
+          this.classifierAmbulatoire.forEach((classifier) =>  {
+            const predictionScore = templateResult[classifier];
+            this.templateDatasetAmbulatoire.data.push(predictionScore);
+          });
+
+          this.classifierHospitalise.forEach((classifier) =>  {
           const predictionScore = templateResult[classifier];
-          this.templateDatasetAmbulatoire.data.push(predictionScore);
-        });
+          this.templateDatasetHospitalisation.data.push(predictionScore);
+          });
 
-        this.classifierHospitalise.forEach((classifier) =>  {
-         const predictionScore = templateResult[classifier];
-         this.templateDatasetHospitalisation.data.push(predictionScore);
-        });
-
-        this.chartsData.push(this.templateDatasetAmbulatoire, this.templateDatasetHospitalisation);
-      }
+          this.chartsData.push(this.templateDatasetAmbulatoire, this.templateDatasetHospitalisation);
+        }
+      )
     )
-  )
-.subscribe(
-  () => {
-    this.closeErrorMesssage();
-    this.displaySpinner();
-    console.log('Requete HTTP reussie.');
-  },
-  err => {
-    this.closeSpinner();
-    this.errorMessage = err;
+    .subscribe(
+        () => {
+          this.closeErrorMesssage();
+          this.displaySpinner();
+          console.log('Requete HTTP reussie.');
+        },
+        err => {
+          this.closeSpinner();
+          this.errorMessage = err;
+        }
+      );
   }
-);
-}
 
-ngOnInit() {
-  this.closeErrorMesssage();
-  this.closeSpinner();
+  ngOnInit() {
+    this.closeErrorMesssage();
+    this.closeSpinner();
+    }
   }
-}

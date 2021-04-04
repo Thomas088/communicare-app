@@ -1,4 +1,4 @@
-export enum ClassifierHospitalise {
+export enum ClassifierHospitaliseEnum {
   rfHospitalise,
   nnHospitalise,
   gbtHospitalise

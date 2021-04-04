@@ -1,4 +1,4 @@
-export enum ClassifierAmbulatoire {
+export enum ClassifierAmbulatoireEnum {
   rfAmbulatoire,
   nnAmbulatoire,
   gbtAmbulatoire

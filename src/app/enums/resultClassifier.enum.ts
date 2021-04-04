@@ -1,4 +1,4 @@
-export enum resultClassifier {
+export enum resultClassifierEnum {
   rfAmbulatoire,
   rfHospitalise,
   nnAmbulatoire,
