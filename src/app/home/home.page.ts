@@ -187,7 +187,7 @@ getPredictionResults(): Subscription  {
          this.templateDatasetHospitalisation.data.push(predictionScore);
         });
 
-        this.chartsData = [this.templateDatasetAmbulatoire, this.templateDatasetHospitalisation];
+        this.chartsData.push(this.templateDatasetAmbulatoire, this.templateDatasetHospitalisation);
       }
     )
   )
