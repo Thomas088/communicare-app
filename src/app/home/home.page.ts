@@ -26,6 +26,7 @@ export class HomePage implements OnInit {
   covidForm: FormGroup;
   dateObject: Date = new Date();
   predictionResult: Array<PredictionResult> = [];
+  errorMessage = '';
 
   risques: object  = {
     fr_diabete : 'Diabete',
@@ -119,11 +120,19 @@ chartOptions: ChartOptions = {
     label: 'Hospitalisation'
   };
 
-closeMessage(): void {
+closeResultMessage(): void {
   this.predictionResult.length = 0;
 }
 
-toggleSpinner(): void {
+closeErrorMesssage(): void {
+  this.errorMessage = '';
+}
+ closeSpinner(): void  {
+  document.querySelector('.container__spinner').classList.remove('visible');
+  document.querySelector('.container__spinner').classList.add('invisible');
+ }
+
+displaySpinner(): void {
   document.querySelector('.container__spinner').classList.remove('invisible');
   document.querySelector('.container__spinner').classList.add('visible');
 }
@@ -137,17 +146,13 @@ sendDatas(): Observable<FHIRData> {
 getPredictionResults(): Subscription  {
 
   if (this.predictionResult.length) {
-    this.closeMessage();
+    this.closeResultMessage();
   }
 
   return this.sendDatas().pipe(
 
     map(
       fhirResults => {
-
-        if(fhirResults) {
-          this.toggleSpinner();
-        }
 
         const data = fhirResults.data[0];
         const userName: string = data.subject.display;
@@ -188,14 +193,19 @@ getPredictionResults(): Subscription  {
   )
 .subscribe(
   () => {
-    console.log(this.predictionResult);
-    console.log('HTTP request completed.');
+    this.closeErrorMesssage();
+    this.displaySpinner();
+    console.log('Requete HTTP reussie.');
   },
-  err => console.log(err)
+  err => {
+    this.closeSpinner();
+    this.errorMessage = err;
+  }
 );
 }
 
 ngOnInit() {
-    document.querySelector('.container__spinner').classList.add('invisible');
+  this.closeErrorMesssage();
+  this.closeSpinner();
   }
 }

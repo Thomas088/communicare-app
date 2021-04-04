@@ -53,9 +53,9 @@
     <ion-button class="ion-margin-top" expand="full" ion-button type="submit" [disabled]="!covidForm.valid">Soumettre</ion-button> 
   </form> 
 
-  <ion-card *ngIf="" class="container__error-message">
+  <ion-card *ngIf="this.errorMessage.length" class="container__error-message">
     <ion-card-content>
-
+      {{this.errorMessage}}
     </ion-card-content>
   </ion-card>
 

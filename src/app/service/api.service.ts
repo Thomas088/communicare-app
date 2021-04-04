@@ -26,9 +26,7 @@ export class ApiService {
         `Code retour backend : ${error.status}, ` +
         `Body : ${error.error}`);
     }
-    // Return an observable with a user-facing error message.
-    return throwError(
-    'Une erreur est survenue : Recommencez plus tard.');
+    return throwError(`Une erreur est survenue : veuillez réessayer plus tard.`);
   }
 
   submitForm(data): Observable<FHIRData> {
