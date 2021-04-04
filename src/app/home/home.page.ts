@@ -115,9 +115,9 @@ export class HomePage implements OnInit {
     this.errorMessage = '';
   }
 
- closeSpinner(): void  {
-  document.querySelector('.container__spinner').classList.remove('visible');
-  document.querySelector('.container__spinner').classList.add('invisible');
+  closeSpinner(): void  {
+    document.querySelector('.container__spinner').classList.remove('visible');
+    document.querySelector('.container__spinner').classList.add('invisible');
  }
 
   displaySpinner(): void {
@@ -171,8 +171,8 @@ export class HomePage implements OnInit {
           });
 
           this.classifierHospitalise.forEach((classifier) =>  {
-          const predictionScore = templateResult[classifier];
-          this.templateDatasetHospitalisation.data.push(predictionScore);
+            const predictionScore = templateResult[classifier];
+            this.templateDatasetHospitalisation.data.push(predictionScore);
           });
 
           this.chartsData.push(this.templateDatasetAmbulatoire, this.templateDatasetHospitalisation);
